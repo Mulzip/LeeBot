@@ -223,6 +223,28 @@ async function handleLeveling(message, client) {
       logger.info(
         `${message.author.tag} leveled up to level ${result.level} in ${message.guild.name}`
       );
+
+      // --- NEW AUTO NOTIFIER CHANNEL REDIRECT ---
+      // 1. Swap '123456789012345678' with your chosen channel ID, OR use the bot dashboard configuration
+      const NOTIFIER_CHANNEL_ID = levelingConfig.levelUpChannelId || '123456789012345678'; 
+      
+      const targetChannel = message.guild.channels.cache.get(NOTIFIER_CHANNEL_ID);
+
+      // 2. Generate a clean embedded notice using the bot's embed builder
+      const levelUpEmbed = createEmbed({
+        title: '🎉 Level Up!',
+        description: `GG ${message.author}! You have advanced to **Level ${result.level}**!`,
+        color: 'success',
+      });
+
+      if (targetChannel) {
+        // Send to your dedicated channel
+        await targetChannel.send({ content: `${message.author}`, embeds: [levelUpEmbed] }).catch(() => {});
+      } else {
+        // Fallback: if the specific channel ID can't be found, send it where they typed
+        await message.channel.send({ embeds: [levelUpEmbed] }).catch(() => {});
+      }
+      // ------------------------------------------
     }
   } catch (error) {
     logger.error('Error handling leveling for message:', error);
