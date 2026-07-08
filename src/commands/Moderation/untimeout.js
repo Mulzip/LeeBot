@@ -3,7 +3,6 @@ import { successEmbed } from '../../utils/embeds.js';
 import { logger } from '../../utils/logger.js';
 import { TitanBotError, ErrorTypes, handleInteractionError } from '../../utils/errorHandler.js';
 import { InteractionHelper } from '../../utils/interactionHelper.js';
-import { ModerationService } from '../../services/moderationService.js';
 
 export default {
     data: new SlashCommandBuilder()
@@ -54,20 +53,14 @@ export default {
                 );
             }
 
-            // Setting duration to 0ms effectively removes the timeout via ModerationService
-            const result = await ModerationService.timeoutUser({
-                guild: interaction.guild,
-                member,
-                moderator: interaction.member,
-                durationMs: 0, 
-                reason: `[Untimeout] ${reason}`,
-            });
+            // Directly speak to Discord's API to strip the timeout completely
+            await member.timeout(null, `[Untimeout by ${interaction.user.tag}] ${reason}`);
 
             await InteractionHelper.safeEditReply(interaction, {
                 embeds: [
                     successEmbed(
                         `🔊 **Removed timeout** from ${targetUser.tag}.`,
-                        `**Reason:** ${reason}\n**Case ID:** #${result.caseId}`,
+                        `**Reason:** ${reason}`,
                     ),
                 ],
             });
