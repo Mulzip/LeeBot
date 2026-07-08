@@ -226,7 +226,7 @@ async function handleLeveling(message, client) {
 
       // --- NEW AUTO NOTIFIER CHANNEL REDIRECT ---
       // 1. Swap '123456789012345678' with your chosen channel ID, OR use the bot dashboard configuration
-      const NOTIFIER_CHANNEL_ID = levelingConfig.levelUpChannelId || '123456789012345678'; 
+      const NOTIFIER_CHANNEL_ID = levelingConfig.levelUpChannelId || '1524373320957558784'; 
       
       const targetChannel = message.guild.channels.cache.get(NOTIFIER_CHANNEL_ID);
 
